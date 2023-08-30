@@ -23,10 +23,11 @@ class Lesson(models.Model):
     lesson_preview = models.ImageField(**NULLABLE, verbose_name='Картинка', )
     lesson_comment = models.TextField(**NULLABLE, verbose_name='Описание')
     lesson_url = models.URLField(max_length=200, **NULLABLE, verbose_name='Ссылка')
-    course_name = models.ForeignKey('Course', on_delete=models.CASCADE, **NULLABLE)
+    course_name = models.ForeignKey(Course, on_delete=models.CASCADE, **NULLABLE,
+                                    related_name='course')
 
     def __str__(self):
-        return f'{self.lesson_name}'
+        return f'{self.lesson_name}, {self.course_name}'
 
     class Meta:
         verbose_name = 'Урок'
