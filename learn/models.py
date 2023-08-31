@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -32,3 +34,28 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = 'Урок'
         verbose_name_plural = 'Уроки'
+
+
+class Payments(models.Model):
+    PAY = [
+        ('cash', 'Наличные'),
+        ('account', 'Оплата на счет')
+    ]
+
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
+                                 verbose_name='Пользователь')
+    payment_date = models.DateField(default=timezone.now, verbose_name='Дата оплаты')
+    paid_course = models.ForeignKey(Course, on_delete=models.CASCADE,
+                                    verbose_name='Оплаченный курс')
+    paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE,
+                                    verbose_name='Оплаченный урок')
+    payment = models.ImageField(verbose_name='Сумма оплаты')
+    payment_method = models.CharField(max_length=7, choices=PAY,
+                                      verbose_name='Метод оплаты')
+
+    def __str__(self):
+        return f'{self.customer}'
+
+    class Meta:
+        verbose_name = 'Оплата'
+        verbose_name_plural = 'Оплаты'
