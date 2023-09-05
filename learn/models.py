@@ -49,7 +49,7 @@ class Payments(models.Model):
                                     verbose_name='Оплаченный курс')
     paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, **NULLABLE,
                                     verbose_name='Оплаченный урок')
-    payment = models.ImageField(verbose_name='Сумма оплаты')
+    payment = models.IntegerField(verbose_name='Сумма оплаты')
     payment_method = models.CharField(max_length=7, choices=PAY,
                                       verbose_name='Метод оплаты')
 
