@@ -43,11 +43,11 @@ class Payments(models.Model):
     ]
 
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
-                                 verbose_name='Пользователь')
+                                 related_name='customer', verbose_name='Пользователь')
     payment_date = models.DateField(default=timezone.now, verbose_name='Дата оплаты')
-    paid_course = models.ForeignKey(Course, on_delete=models.CASCADE,
+    paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, **NULLABLE,
                                     verbose_name='Оплаченный курс')
-    paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE,
+    paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, **NULLABLE,
                                     verbose_name='Оплаченный урок')
     payment = models.ImageField(verbose_name='Сумма оплаты')
     payment_method = models.CharField(max_length=7, choices=PAY,
