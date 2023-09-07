@@ -6,11 +6,11 @@ from users.models import User
 class Command(BaseCommand):
     def handle(self, *args, **options):
         user = User.objects.create(
-            email='vadimcola@mail.ru',
-            first_name='Admin',
-            last_name='Admin',
-            is_staff=True,
-            is_superuser=True,
+            email='test@test.ru',
+            first_name='Иван',
+            last_name='Иванов',
+            is_staff=False,
+            is_superuser=False,
             is_active=True
         )
 
