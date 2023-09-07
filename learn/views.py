@@ -3,6 +3,7 @@ from rest_framework import viewsets, generics
 from rest_framework.filters import OrderingFilter
 
 from learn.models import Course, Lesson, Payments
+from learn.permissions import IsOwner
 from learn.serializers import CourseSerializer, PaymentsSerializer, LessonSerializer
 
 
@@ -14,11 +15,13 @@ class CourseViewSet(viewsets.ModelViewSet):
 class LessonList(generics.ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsOwner]
 
 
 class LessonDetail(generics.RetrieveAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsOwner]
 
 
 class LessonCreate(generics.CreateAPIView):

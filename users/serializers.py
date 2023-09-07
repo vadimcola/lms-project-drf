@@ -9,5 +9,5 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        new_user = User.objects.create_user()
+        new_user = User.objects.create_user(**validated_data)
         return new_user
