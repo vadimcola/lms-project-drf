@@ -11,7 +11,7 @@ from learn.serializers import CourseSerializer, PaymentsSerializer, LessonSerial
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [IsAuthenticated, CoursePermission]
+    permission_classes = [CoursePermission]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -46,7 +46,7 @@ class LessonDetail(generics.RetrieveAPIView):
 class LessonCreate(generics.CreateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [AllowAny, LessonPermission]
+    permission_classes = [LessonPermission]
 
     def perform_create(self, serializer):
         new_lesson = serializer.save(owner=self.request.user)
@@ -57,7 +57,7 @@ class LessonCreate(generics.CreateAPIView):
 class LessonUpdate(generics.UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, LessonPermission]
+    permission_classes = [IsAuthenticated]
 
 
 class LessonDelete(generics.DestroyAPIView):
