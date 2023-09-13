@@ -1,17 +1,13 @@
 from rest_framework.permissions import BasePermission
 
 
-class LessonPermission(BasePermission):
+class CustomPermission(BasePermission):
     def has_permission(self, request, view):
-        if request.method in ['GET', 'PUT', 'PATCH'] and request.user.is_staff:
+        if not request.user.is_superuser and not request.user.is_staff:
             return True
-        else:
-            return False
-
-
-class CoursePermission(BasePermission):
-    def has_permission(self, request, view):
-        if request.method in ['GET', 'PUT', 'PATCH'] and request.user.is_staff:
+        elif request.user.is_superuser:
+            return True
+        elif request.method in ['GET', 'PUT', 'PATCH'] and request.user.is_staff:
             return True
         else:
             return False

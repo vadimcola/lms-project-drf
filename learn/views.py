@@ -1,23 +1,24 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from learn.models import Course, Lesson, Payments
-from learn.permissions import CoursePermission, LessonPermission
+from learn.permissions import CustomPermission
 from learn.serializers import CourseSerializer, PaymentsSerializer, LessonSerializer
 
 
-class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
-    permission_classes = [CoursePermission]
-
+class MixinQueryset:
     def get_queryset(self):
         queryset = super().get_queryset()
         if not self.request.user.is_staff:
             queryset = queryset.filter(owner=self.request.user.pk)
         return queryset
+
+
+class CourseViewSet(MixinQueryset, viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes = [CustomPermission]
 
     def perform_create(self, serializer):
         new_course = serializer.save(owner=self.request.user)
@@ -25,28 +26,20 @@ class CourseViewSet(viewsets.ModelViewSet):
         new_course.save()
 
 
-class LessonList(generics.ListAPIView):
+class LessonList(MixinQueryset, generics.ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, LessonPermission]
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        if not self.request.user.is_staff:
-            queryset = queryset.filter(owner=self.request.user.pk)
-        return queryset
 
 
-class LessonDetail(generics.RetrieveAPIView):
+class LessonDetail(MixinQueryset, generics.RetrieveAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [AllowAny, LessonPermission]
 
 
 class LessonCreate(generics.CreateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [LessonPermission]
+    permission_classes = [CustomPermission]
 
     def perform_create(self, serializer):
         new_lesson = serializer.save(owner=self.request.user)
@@ -54,16 +47,15 @@ class LessonCreate(generics.CreateAPIView):
         new_lesson.save()
 
 
-class LessonUpdate(generics.UpdateAPIView):
+class LessonUpdate(MixinQueryset, generics.UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class LessonDelete(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = PaymentsSerializer
-    permission_classes = [AllowAny, LessonPermission]
+    permission_classes = [CustomPermission]
 
 
 class PaymentsList(generics.ListAPIView):
@@ -72,4 +64,3 @@ class PaymentsList(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['paid_course', 'paid_lesson', 'payment_method']
     ordering_fields = ['payment_date']
-    permission_classes = [IsAuthenticated]
