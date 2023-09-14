@@ -1,5 +1,7 @@
 from rest_framework.permissions import BasePermission
 
+from users.serializers import UserSerializer, UsersSerializer
+
 
 class GetPermission(BasePermission):
     def has_permission(self, request, view):
@@ -20,3 +22,11 @@ class UpdatePermission(BasePermission):
                 return True
         else:
             return False
+
+
+class MyPermission(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if obj.pk == request.user.pk:
+            return UserSerializer
+        else:
+            return UsersSerializer
