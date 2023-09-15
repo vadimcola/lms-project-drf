@@ -1,4 +1,4 @@
-from rest_framework import serializers, request
+from rest_framework import serializers
 
 from learn.serializers import PaymentsSerializer
 from users.models import User
@@ -16,7 +16,4 @@ class UserSerializer(serializers.ModelSerializer):
         return new_user
 
 
-class UsersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['email']
+
