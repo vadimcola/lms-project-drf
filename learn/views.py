@@ -1,10 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
 from rest_framework.filters import OrderingFilter
+from rest_framework.response import Response
 
-from learn.models import Course, Lesson, Payments
+from learn.models import Course, Lesson, Payments, CourseSubscription
 from learn.permissions import CustomPermission
-from learn.serializers import CourseSerializer, PaymentsSerializer, LessonSerializer
+from learn.serializers import CourseSerializer, PaymentsSerializer, LessonSerializer, CourseSubscriptionSerializer
 
 
 class MixinQueryset:
@@ -64,3 +65,16 @@ class PaymentsList(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['paid_course', 'paid_lesson', 'payment_method']
     ordering_fields = ['payment_date']
+
+
+class CourseSubscriptionCreate(generics.CreateAPIView):
+    queryset = CourseSubscription.objects.all()
+    serializer_class = CourseSubscriptionSerializer
+
+    def perform_create(self, serializer):
+        new_subscription = serializer.save(user=self.request.user)
+        new_subscription.user = self.request.user
+        new_subscription.is_subscribed = True
+        new_subscription.save()
+        return Response({'message': 'Вы успешно подписались на курс.'})
+

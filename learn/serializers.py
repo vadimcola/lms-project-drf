@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from learn.models import Course, Lesson, Payments
+from learn.models import Course, Lesson, Payments, CourseSubscription
 from learn.validators import validate_url
 
 
@@ -24,4 +24,10 @@ class CourseSerializer(serializers.ModelSerializer):
 class PaymentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payments
+        fields = '__all__'
+
+
+class CourseSubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseSubscription
         fields = '__all__'

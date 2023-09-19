@@ -13,6 +13,7 @@ urlpatterns = [
     path('lesson/<int:pk>/update/', LessonUpdate.as_view()),
     path('lesson/<int:pk>/delete/', LessonDelete.as_view()),
     path('payments/', PaymentsList.as_view()),
+    path('subscribe/', CourseSubscriptionCreate.as_view()),
 ]
 
 router = routers. SimpleRouter()
