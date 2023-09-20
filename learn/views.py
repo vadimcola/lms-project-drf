@@ -1,9 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
 
 from learn.models import Course, Lesson, Payments, CourseSubscription
+from learn.paginators import LessonPaginator, CoursePaginator
 from learn.permissions import CustomPermission
 from learn.serializers import CourseSerializer, PaymentsSerializer, LessonSerializer, CourseSubscriptionSerializer
 
@@ -20,6 +21,7 @@ class CourseViewSet(MixinQueryset, viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [CustomPermission]
+    pagination_class = CoursePaginator
 
     def perform_create(self, serializer):
         new_course = serializer.save(owner=self.request.user)
@@ -30,6 +32,7 @@ class CourseViewSet(MixinQueryset, viewsets.ModelViewSet):
 class LessonList(MixinQueryset, generics.ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = LessonPaginator
 
 
 class LessonDetail(MixinQueryset, generics.RetrieveAPIView):
@@ -76,5 +79,8 @@ class CourseSubscriptionCreate(generics.CreateAPIView):
         new_subscription.user = self.request.user
         new_subscription.is_subscribed = True
         new_subscription.save()
-        return Response({'message': 'Вы успешно подписались на курс.'})
 
+
+class CourseSubscriptionDelete(generics.DestroyAPIView):
+    queryset = CourseSubscription.objects.all()
+    serializer_class = CourseSubscriptionSerializer

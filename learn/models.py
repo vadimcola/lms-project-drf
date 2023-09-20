@@ -71,7 +71,7 @@ class CourseSubscription(models.Model):
     is_subscribed = models.BooleanField(default=False, verbose_name='Подписка на обновления')
 
     def __str__(self):
-        return f'{self.user.name} - {self.course.course_name}'
+        return f'{self.user} - {self.course.course_name}'
 
     class Meta:
         verbose_name = 'Подписка на курс'

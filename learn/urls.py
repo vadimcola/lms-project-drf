@@ -14,6 +14,8 @@ urlpatterns = [
     path('lesson/<int:pk>/delete/', LessonDelete.as_view()),
     path('payments/', PaymentsList.as_view()),
     path('subscribe/', CourseSubscriptionCreate.as_view()),
+    path('subscribe/<int:pk>/delete/', CourseSubscriptionDelete.as_view()),
+
 ]
 
 router = routers. SimpleRouter()
