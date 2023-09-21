@@ -7,7 +7,7 @@ from learn.views import *
 app_name = LearnConfig.name
 
 urlpatterns = [
-    path('lesson/', LessonList.as_view()),
+    path('lesson/', LessonList.as_view(), name='list'),
     path('lesson/<int:pk>/', LessonDetail.as_view()),
     path('lesson/create/', LessonCreate.as_view()),
     path('lesson/<int:pk>/update/', LessonUpdate.as_view()),
