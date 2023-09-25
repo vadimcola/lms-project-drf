@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, generics, status
+from rest_framework import viewsets, generics
 from rest_framework.filters import OrderingFilter
-from rest_framework.response import Response
+
 
 from learn.models import Course, Lesson, Payments, CourseSubscription
 from learn.paginators import LessonPaginator, CoursePaginator
