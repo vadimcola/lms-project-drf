@@ -19,7 +19,9 @@ class LessonTest(APITestCase):
             lesson_name='Тест1 имя',
             lesson_comment='Тест1',
             lesson_url='https://www.youtube.com/',
-            owner=self.user
+            owner=self.user,
+            course_name=self.course
+
         )
 
     def test_lesson_create(self):
@@ -48,6 +50,58 @@ class LessonTest(APITestCase):
         response = self.client.get(reverse('learn:detail', args=[self.lesson.pk]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        self.assertEqual(response.json(), {
+            "id": 1,
+            "lesson_url": "https://www.youtube.com/",
+            "lesson_name": "Тест1 имя",
+            "lesson_preview": None,
+            "lesson_comment": "Тест1",
+            "course_name": self.course.pk,
+            "owner": self.user.pk
+        }
+                         )
+
     def test_lesson_delete(self):
         response = self.client.delete('/lesson/1/delete/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_lesson_update(self):
+        data = {
+            "lesson_name": "Тест измененный",
+            "lesson_comment": "Измененный"
+        }
+
+        response = self.client.patch(reverse('learn:update', args=[self.lesson.pk]), data=data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(response.json(), {
+            "id": 1,
+            "lesson_url": "https://www.youtube.com/",
+            "lesson_name": "Тест измененный",
+            "lesson_preview": None,
+            "lesson_comment": "Измененный",
+            "course_name": self.course.pk,
+            "owner": self.user.pk
+        }
+                         )
+
+    def test_lesson_list(self):
+        response = self.client.get(reverse('learn:list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(response.json(), {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": 1,
+                    "lesson_url": "https://www.youtube.com/",
+                    "lesson_name": "Тест1 имя",
+                    "lesson_preview": None,
+                    "lesson_comment": "Тест1",
+                    "course_name": self.course.pk,
+                    "owner": self.user.pk
+                },
+            ],
+        })
