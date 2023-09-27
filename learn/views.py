@@ -18,51 +18,60 @@ class MixinQueryset:
 
 
 class CourseViewSet(MixinQueryset, viewsets.ModelViewSet):
+    """CRUD Курса"""
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [CustomPermission]
     pagination_class = CoursePaginator
 
     def perform_create(self, serializer):
+        """При создании курса его владелец, авторизованный пользователь"""
         new_course = serializer.save(owner=self.request.user)
         new_course.owner = self.request.user
         new_course.save()
 
 
 class LessonList(MixinQueryset, generics.ListAPIView):
+    """Просмотр списка уроков"""
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     pagination_class = LessonPaginator
 
 
 class LessonDetail(MixinQueryset, generics.RetrieveAPIView):
+    """Посмотр детальной информации выбранного урока"""
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
 
 
 class LessonCreate(generics.CreateAPIView):
+    """Создание урока"""
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [CustomPermission]
 
     def perform_create(self, serializer):
+        """При создании урока его владелец, авторизованный пользователь """
         new_lesson = serializer.save(owner=self.request.user)
         new_lesson.owner = self.request.user
         new_lesson.save()
 
 
 class LessonUpdate(MixinQueryset, generics.UpdateAPIView):
+    """Обновоение урока"""
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
 
 
 class LessonDelete(generics.DestroyAPIView):
+    """Удаление урока"""
     queryset = Lesson.objects.all()
     serializer_class = PaymentsSerializer
     permission_classes = [CustomPermission]
 
 
 class PaymentsList(generics.ListAPIView):
+    """Просмотр оплаты за Курс """
     queryset = Payments.objects.all()
     serializer_class = PaymentsSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -71,6 +80,7 @@ class PaymentsList(generics.ListAPIView):
 
 
 class CourseSubscriptionCreate(generics.CreateAPIView):
+    """Подписка на курс"""
     queryset = CourseSubscription.objects.all()
     serializer_class = CourseSubscriptionSerializer
 
@@ -82,5 +92,6 @@ class CourseSubscriptionCreate(generics.CreateAPIView):
 
 
 class CourseSubscriptionDelete(generics.DestroyAPIView):
+    """Удаление подписки на курс"""
     queryset = CourseSubscription.objects.all()
     serializer_class = CourseSubscriptionSerializer

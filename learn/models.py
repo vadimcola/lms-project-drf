@@ -28,7 +28,7 @@ class Lesson(models.Model):
     lesson_comment = models.TextField(**NULLABLE, verbose_name='Описание')
     lesson_url = models.URLField(max_length=200, **NULLABLE, verbose_name='Ссылка')
     course_name = models.ForeignKey(Course, on_delete=models.CASCADE, **NULLABLE,
-                                    related_name='course')
+                                    related_name='course', verbose_name='Курс')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
                               verbose_name='Владелец')
 
