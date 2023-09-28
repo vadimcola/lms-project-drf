@@ -80,6 +80,32 @@ class PaymentsList(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['paid_course', 'paid_lesson', 'payment_method']
     ordering_fields = ['payment_date']
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        stripe.api_key = 'sk_test_51NutEgKP3JmokYuxFYXHCT1R788HpwldCZ2z7bhBUIrJuJkWozlppDYiJB3nqkPQxpg1l5YFX55sC4XO5O9Rva6200jQmRlwjr'
+        product = stripe.Product.create(name=Payments.paid_course)
+        data_product = product.id
+        price = stripe.Price.create(
+            unit_amount=1200000,
+            currency="rub",
+            product=data_product,
+        )
+        data_price = price.id
+        url_pay = stripe.checkout.Session.create(
+            success_url="https://example.com/success",
+            line_items=[
+                {
+                    "price": data_price,
+                    "quantity": 1,
+                },
+            ],
+            mode="payment",
+        )
+        return Response(url_pay)
+
+
+
 
 
 class CourseSubscriptionCreate(generics.CreateAPIView):
@@ -101,11 +127,11 @@ class CourseSubscriptionDelete(generics.DestroyAPIView):
 
 
 class StripePaymentView(APIView):
+
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
         stripe.api_key = 'sk_test_51NutEgKP3JmokYuxFYXHCT1R788HpwldCZ2z7bhBUIrJuJkWozlppDYiJB3nqkPQxpg1l5YFX55sC4XO5O9Rva6200jQmRlwjr'
-
         try:
             amount = 100000  # Сумма платежа в копейках (в данном случае - 10 рублей)
             currency = 'rub'  # Валюта платежа (рубли)
@@ -122,3 +148,4 @@ class StripePaymentView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)})
+
