@@ -2,7 +2,7 @@ from rest_framework import routers
 from django.urls import path
 from learn.apps import LearnConfig
 from learn.views import LessonList, LessonDetail, LessonCreate, LessonUpdate, LessonDelete, PaymentsList, \
-    CourseSubscriptionCreate, CourseSubscriptionDelete, CourseViewSet
+    CourseSubscriptionCreate, CourseSubscriptionDelete, CourseViewSet, StripePaymentView
 
 app_name = LearnConfig.name
 
@@ -15,6 +15,7 @@ urlpatterns = [
     path('payments/', PaymentsList.as_view()),
     path('subscribe/', CourseSubscriptionCreate.as_view(), name='sub_create'),
     path('subscribe/<int:pk>/delete/', CourseSubscriptionDelete.as_view(), name='sub_delete'),
+    path('stripe_payment/', StripePaymentView.as_view(), name='stripe_payment'),
 
 ]
 
