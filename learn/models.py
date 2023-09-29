@@ -50,12 +50,12 @@ class Payments(models.Model):
 
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
                                  related_name='customer', verbose_name='Пользователь')
-    payment_date = models.DateField(default=timezone.now, verbose_name='Дата оплаты')
+    payment_date = models.DateTimeField(default=timezone.now, verbose_name='Дата оплаты')
     paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, **NULLABLE,
                                     related_name='pay_course', verbose_name='Оплаченный курс')
     # paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, **NULLABLE,
     #                                 verbose_name='Оплаченный урок')
-    payment = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма оплаты')
+    payment = models.ForeignKey(Course, on_delete=models.CASCADE, **NULLABLE, verbose_name='Сумма оплаты')
     payment_method = models.CharField(max_length=7, choices=PAY,
                                       verbose_name='Метод оплаты')
     payment_url = models.URLField(**NULLABLE, verbose_name='Ссылка на оплату картой')

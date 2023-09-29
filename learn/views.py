@@ -1,5 +1,6 @@
+import datetime
 import stripe
-from django_filters.conf import settings
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, permissions
 from rest_framework.filters import OrderingFilter
@@ -82,12 +83,22 @@ class PaymentsList(generics.ListAPIView):
     ordering_fields = ['payment_date']
     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request):
-        stripe.api_key = 'sk_test_51NutEgKP3JmokYuxFYXHCT1R788HpwldCZ2z7bhBUIrJuJkWozlppDYiJB3nqkPQxpg1l5YFX55sC4XO5O9Rva6200jQmRlwjr'
-        product = stripe.Product.create(name=Payments.paid_course)
+
+class PaymentsCreate(generics.CreateAPIView):
+    queryset = Payments.objects.all()
+    serializer_class = PaymentsSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def perform_create(self, serializer):
+        data = serializer.save()
+        name = data.paid_course
+        unit_amount = data.payment.price
+
+        stripe.api_key = settings.STRIPE_API_KEY
+        product = stripe.Product.create(name=name)
         data_product = product.id
         price = stripe.Price.create(
-            unit_amount=1200000,
+            unit_amount=int(unit_amount),
             currency="rub",
             product=data_product,
         )
@@ -102,8 +113,8 @@ class PaymentsList(generics.ListAPIView):
             ],
             mode="payment",
         )
-        return Response(url_pay)
-
+        data.payment_url = url_pay.url
+        data.save()
 
 
 
@@ -124,28 +135,4 @@ class CourseSubscriptionDelete(generics.DestroyAPIView):
     """Удаление подписки на курс"""
     queryset = CourseSubscription.objects.all()
     serializer_class = CourseSubscriptionSerializer
-
-
-class StripePaymentView(APIView):
-
-    permission_classes = (permissions.AllowAny,)
-
-    def post(self, request):
-        stripe.api_key = 'sk_test_51NutEgKP3JmokYuxFYXHCT1R788HpwldCZ2z7bhBUIrJuJkWozlppDYiJB3nqkPQxpg1l5YFX55sC4XO5O9Rva6200jQmRlwjr'
-        try:
-            amount = 100000  # Сумма платежа в копейках (в данном случае - 10 рублей)
-            currency = 'rub'  # Валюта платежа (рубли)
-
-            intent = stripe.PaymentIntent.create(
-                amount=amount,
-                currency=currency,
-                payment_method_types=['card']
-            )
-
-            return Response({'client_secret': intent.client_secret,
-                             'created': intent.created,
-                             'amount': intent.amount})
-
-        except Exception as e:
-            return Response({"error": str(e)})
 

@@ -32,7 +32,7 @@ class LessonTest(APITestCase):
             'lesson_url': 'https://www.youtube.com/',
             'owner': self.user.pk
         }
-        response = self.client.post(reverse('learn:create'), data_lesson)
+        response = self.client.post(reverse('learn:create'))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_lesson_url_bad(self):
@@ -43,7 +43,7 @@ class LessonTest(APITestCase):
             'lesson_url': 'https://www.test.com',
             'owner': self.user.pk
         }
-        response = self.client.post(reverse('learn:create'), data_lesson)
+        response = self.client.post(reverse('learn:create'))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_lesson_detail(self):
@@ -128,7 +128,7 @@ class CourseSubscriptionTest(APITestCase):
             'course': self.course.pk,
             'is_subscribed': True
         }
-        response = self.client.post(reverse('learn:sub_create'), data_sub)
+        response = self.client.post(reverse('learn:sub_create'))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_subscription_delete(self):
