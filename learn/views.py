@@ -90,19 +90,18 @@ class PaymentsCreate(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
     def perform_create(self, serializer):
-        data = serializer.save()
+        data = serializer.save(customer=self.request.user)
         name = data.paid_course
-        unit_amount = data.payment.price
-
+        unit_amount = data.paid_course.price
         stripe.api_key = settings.STRIPE_API_KEY
         product = stripe.Product.create(name=name)
         data_product = product.id
-        price = stripe.Price.create(
-            unit_amount=int(unit_amount),
+        amount = stripe.Price.create(
+            unit_amount=int(unit_amount) * 100,
             currency="rub",
             product=data_product,
         )
-        data_price = price.id
+        data_price = amount.id
         url_pay = stripe.checkout.Session.create(
             success_url="https://example.com/success",
             line_items=[
@@ -111,12 +110,14 @@ class PaymentsCreate(generics.CreateAPIView):
                     "quantity": 1,
                 },
             ],
-            mode="payment",
+            mode="payment"
         )
+        data.customer = self.request.user
         data.payment_url = url_pay.url
+        data.payment = int(amount.unit_amount_decimal)/100
+        data.payment_method = "card"
+        data.payment_id = url_pay.id
         data.save()
-
-
 
 
 class CourseSubscriptionCreate(generics.CreateAPIView):
@@ -135,4 +136,3 @@ class CourseSubscriptionDelete(generics.DestroyAPIView):
     """Удаление подписки на курс"""
     queryset = CourseSubscription.objects.all()
     serializer_class = CourseSubscriptionSerializer
-

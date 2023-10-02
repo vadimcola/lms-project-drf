@@ -55,11 +55,12 @@ class Payments(models.Model):
                                     related_name='pay_course', verbose_name='Оплаченный курс')
     # paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, **NULLABLE,
     #                                 verbose_name='Оплаченный урок')
-    payment = models.ForeignKey(Course, on_delete=models.CASCADE, **NULLABLE, verbose_name='Сумма оплаты')
-    payment_method = models.CharField(max_length=7, choices=PAY,
+    payment = models.DecimalField(**NULLABLE, max_digits=10, decimal_places=2, verbose_name='Сумма оплаты')
+    payment_method = models.CharField(**NULLABLE, max_length=7, choices=PAY,
                                       verbose_name='Метод оплаты')
     payment_url = models.URLField(**NULLABLE, verbose_name='Ссылка на оплату картой')
     payment_status = models.BooleanField(default=False, verbose_name='Статус оплаты')
+    payment_id = models.CharField(**NULLABLE, max_length=250, verbose_name='ID оплаты')
 
     def __str__(self):
         return f'{self.customer}'
