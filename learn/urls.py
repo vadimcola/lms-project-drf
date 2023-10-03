@@ -14,7 +14,7 @@ urlpatterns = [
     path('lesson/<int:pk>/delete/', LessonDelete.as_view(), name='delete'),
     path('payments/', PaymentsList.as_view()),
     path('payments/create/', PaymentsCreate.as_view()),
-    path('payments/check/', PaymentCheckStatus.as_view()),
+    path('payments/<int:pk>/check/', PaymentCheckStatus.as_view()),
     path('subscribe/', CourseSubscriptionCreate.as_view(), name='sub_create'),
     path('subscribe/<int:pk>/delete/', CourseSubscriptionDelete.as_view(), name='sub_delete'),
 

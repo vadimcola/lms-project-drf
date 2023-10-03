@@ -1,12 +1,11 @@
-
 import stripe
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, permissions
 from rest_framework.filters import OrderingFilter
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-
 
 from learn.models import Course, Lesson, Payments, CourseSubscription
 from learn.paginators import LessonPaginator, CoursePaginator
@@ -82,6 +81,7 @@ class PaymentsList(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['paid_course', 'paid_lesson', 'payment_method']
     ordering_fields = ['payment_date']
+    permission_classes = (AllowAny,)
 
 
 class PaymentsCreate(generics.CreateAPIView):
@@ -119,18 +119,22 @@ class PaymentsCreate(generics.CreateAPIView):
         data.save()
 
 
-class PaymentCheckStatus(generics.ListAPIView):
+class PaymentCheckStatus(generics.RetrieveAPIView):
     queryset = Payments.objects.all()
     serializer_class = PaymentsSerializer
     permission_classes = (AllowAny,)
 
-    def get_serializer(self, serializer, *args, **kwargs):
-        data = serializer
-        print(data.payment_id)
-        stripe.api_key = settings.STRIPE_API_KEY
-        data_pay = stripe.checkout.Session.retrieve(
-            'cs_test_a1gZqOjZjMKFBXptyRWXePedld9LtLc11qfufUGZnW40aBp6JExShl3SKK')
-        return Response(data_pay)
+    def get(self, request, pk):
+        setting = get_object_or_404(Payments, id=pk)
+        print(setting)
+
+    # def get_serializer(self, serializer, *args, **kwargs):
+    #     data = serializer
+    #     print(data.payment_id)
+    #     stripe.api_key = settings.STRIPE_API_KEY
+    #     data_pay = stripe.checkout.Session.retrieve(
+    #         'cs_test_a1gZqOjZjMKFBXptyRWXePedld9LtLc11qfufUGZnW40aBp6JExShl3SKK')
+    #     return Response(data_pay)
 
 
 class CourseSubscriptionCreate(generics.CreateAPIView):
