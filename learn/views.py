@@ -1,9 +1,10 @@
 import stripe
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, generics, permissions
+
+from rest_framework import viewsets, generics
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import get_object_or_404
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
@@ -126,15 +127,17 @@ class PaymentCheckStatus(generics.RetrieveAPIView):
 
     def get(self, request, pk):
         setting = get_object_or_404(Payments, id=pk)
-        print(setting)
+        payment_id = str(setting.payment_id)
+        stripe.api_key = settings.STRIPE_API_KEY
+        data_pay = stripe.checkout.Session.retrieve(payment_id)
+        payment_status = data_pay.payment_status
+        if payment_status == "unpaid":
+            return Response(payment_status)
+        else:
+            return Response("None")
 
-    # def get_serializer(self, serializer, *args, **kwargs):
-    #     data = serializer
-    #     print(data.payment_id)
-    #     stripe.api_key = settings.STRIPE_API_KEY
-    #     data_pay = stripe.checkout.Session.retrieve(
-    #         'cs_test_a1gZqOjZjMKFBXptyRWXePedld9LtLc11qfufUGZnW40aBp6JExShl3SKK')
-    #     return Response(data_pay)
+
+
 
 
 class CourseSubscriptionCreate(generics.CreateAPIView):
