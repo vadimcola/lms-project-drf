@@ -47,7 +47,7 @@ class LessonTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_lesson_detail(self):
-        response = self.client.get(reverse('learn:detail', args=[self.lesson.pk]))
+        response = self.client.get(reverse('learn:detail', args=[self.lesson.pk]), )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(response.json(), {
@@ -86,7 +86,7 @@ class LessonTest(APITestCase):
                          )
 
     def test_lesson_list(self):
-        response = self.client.get(reverse('learn:list'))
+        response = self.client.get(reverse('learn:list'), )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(response.json(), {

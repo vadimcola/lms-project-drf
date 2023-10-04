@@ -6,7 +6,7 @@ from users.models import User
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        customer = User.objects.get(email='vadimcola1983@yandex.ru')
+        customer = User.objects.get(,
 
         Payments.objects.create(customer=customer, payment_date='2023-07-10',
                                 paid_course_id=2, paid_lesson_id=7,
