@@ -131,6 +131,7 @@ class PaymentCheckStatus(generics.RetrieveAPIView):
     """Проверка статуса оплаты"""
     queryset = Payments.objects.all()
     serializer_class = PaymentsSerializer
+    permission_classes = (AllowAny,)
 
     def get(self, request, pk):
         """Метод проверяет статус оплаты и добовляет в БД статус оплаты"""
@@ -143,9 +144,9 @@ class PaymentCheckStatus(generics.RetrieveAPIView):
             if payment_status == "paid":
                 setting.payment_status = True
                 setting.save()
-                return Response("Курс оплачен")
+                return Response({"massage": "Курс оплачен"})
             else:
-                return Response("Курс неоплачен")
+                return Response({"massage": "Курс неоплачен"}, )
 
         except stripe.error.StripeError as e:
             print(f"Error: {e}")
