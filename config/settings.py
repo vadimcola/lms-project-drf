@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -159,5 +159,23 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # URL-адрес брокера сообщений
 CELERY_BROKER_URL = 'redis://localhost:6379'
+
 # URL-адрес брокера результатов, также Redis
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+# Часовой пояс для работы Celery
+CELERY_TIMEZONE = "UTC"
+
+# Флаг отслеживания выполнения задач
+CELERY_TASK_TRACK_STARTED = True
+
+# Максимальное время на выполнение задачи
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# Настройки для Celery
+CELERY_BEAT_SCHEDULE = {
+    'check_user': {
+        'task': 'users.tasks.check_user',  # Путь к задаче
+        'schedule': timedelta(minutes=1),  # Расписание выполнения задачи (например, каждую минуту)
+    },
+}
