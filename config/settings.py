@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
+    'stripe',
+    'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
@@ -143,3 +144,5 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.AllowAny',
     ]
 }
+
+STRIPE_API_KEY = 'sk_test_51NutEgKP3JmokYuxFYXHCT1R788HpwldCZ2z7bhBUIrJuJkWozlppDYiJB3nqkPQxpg1l5YFX55sC4XO5O9Rva6200jQmRlwjr'
