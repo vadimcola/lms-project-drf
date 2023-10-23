@@ -2,9 +2,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
 from rest_framework.filters import OrderingFilter
 
-from learn.models import Course, Lesson, Payments
+
+from learn.models import Course, Lesson, Payments, CourseSubscription
+from learn.paginators import LessonPaginator, CoursePaginator
 from learn.permissions import CustomPermission
-from learn.serializers import CourseSerializer, PaymentsSerializer, LessonSerializer
+from learn.serializers import CourseSerializer, PaymentsSerializer, LessonSerializer, CourseSubscriptionSerializer
 
 
 class MixinQueryset:
@@ -19,6 +21,7 @@ class CourseViewSet(MixinQueryset, viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [CustomPermission]
+    pagination_class = CoursePaginator
 
     def perform_create(self, serializer):
         new_course = serializer.save(owner=self.request.user)
@@ -29,6 +32,7 @@ class CourseViewSet(MixinQueryset, viewsets.ModelViewSet):
 class LessonList(MixinQueryset, generics.ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = LessonPaginator
 
 
 class LessonDetail(MixinQueryset, generics.RetrieveAPIView):
@@ -64,3 +68,19 @@ class PaymentsList(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['paid_course', 'paid_lesson', 'payment_method']
     ordering_fields = ['payment_date']
+
+
+class CourseSubscriptionCreate(generics.CreateAPIView):
+    queryset = CourseSubscription.objects.all()
+    serializer_class = CourseSubscriptionSerializer
+
+    def perform_create(self, serializer):
+        new_subscription = serializer.save(user=self.request.user)
+        new_subscription.user = self.request.user
+        new_subscription.is_subscribed = True
+        new_subscription.save()
+
+
+class CourseSubscriptionDelete(generics.DestroyAPIView):
+    queryset = CourseSubscription.objects.all()
+    serializer_class = CourseSubscriptionSerializer
