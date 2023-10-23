@@ -18,3 +18,4 @@ urlpatterns = [
 router = routers. SimpleRouter()
 router.register('course', CourseViewSet)
 urlpatterns += router.urls
+
