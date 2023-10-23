@@ -12,6 +12,7 @@ from learn.models import Course, Lesson, Payments, CourseSubscription
 from learn.paginators import LessonPaginator, CoursePaginator
 from learn.permissions import CustomPermission
 from learn.serializers import CourseSerializer, PaymentsSerializer, LessonSerializer, CourseSubscriptionSerializer
+from learn.tasks import send_course_update
 
 
 class MixinQueryset:
@@ -59,6 +60,10 @@ class LessonCreate(generics.CreateAPIView):
         """При создании урока его владелец, авторизованный пользователь """
         new_lesson = serializer.save(owner=self.request.user)
         new_lesson.owner = self.request.user
+
+        if new_lesson:
+            course_id = new_lesson.course_name_id
+            send_course_update.delay(course_id)
         new_lesson.save()
 
 

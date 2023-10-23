@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
+    'django_celery_beat',
 
     'users',
     'learn',
@@ -114,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Krasnoyarsk'
 
 USE_I18N = True
 
@@ -146,3 +147,35 @@ REST_FRAMEWORK = {
 }
 
 STRIPE_API_KEY = 'sk_test_51NutEgKP3JmokYuxFYXHCT1R788HpwldCZ2z7bhBUIrJuJkWozlppDYiJB3nqkPQxpg1l5YFX55sC4XO5O9Rva6200jQmRlwjr'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'vadimcola181183@gmail.com'
+EMAIL_HOST_PASSWORD = 'qaqgwvbloaamvied'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# URL-адрес брокера сообщений
+CELERY_BROKER_URL = 'redis://localhost:6379'
+
+# URL-адрес брокера результатов, также Redis
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+# Часовой пояс для работы Celery
+CELERY_TIMEZONE = "UTC"
+
+# Флаг отслеживания выполнения задач
+CELERY_TASK_TRACK_STARTED = True
+
+# Максимальное время на выполнение задачи
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# Настройки для Celery
+CELERY_BEAT_SCHEDULE = {
+    'check_user': {
+        'task': 'users.tasks.check_user',  # Путь к задаче
+        'schedule': timedelta(minutes=1),  # Расписание выполнения задачи (например, каждую минуту)
+    },
+}
