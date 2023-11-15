@@ -85,14 +85,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.psycopg2-binary',
-        'NAME': 'postgres',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'test',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'BD',
+        'PASSWORD': 'vadim$1983',
+        'HOST': 'db',
     }
 }
-
 
 
 # Password validation
