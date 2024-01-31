@@ -53,8 +53,6 @@ class Payments(models.Model):
     payment_date = models.DateTimeField(default=timezone.now, verbose_name='Дата оплаты')
     paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, **NULLABLE,
                                     related_name='pay_course', verbose_name='Оплаченный курс')
-    # paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, **NULLABLE,
-    #                                 verbose_name='Оплаченный урок')
     payment = models.DecimalField(**NULLABLE, max_digits=10, decimal_places=2, verbose_name='Сумма оплаты')
     payment_method = models.CharField(**NULLABLE, max_length=7, choices=PAY,
                                       verbose_name='Метод оплаты')
@@ -76,7 +74,7 @@ class CourseSubscription(models.Model):
     is_subscribed = models.BooleanField(default=False, verbose_name='Подписка на обновления')
 
     def __str__(self):
-        return f'{self.user} - {self.course.course_name}'
+        return f'{self.user}'
 
     class Meta:
         verbose_name = 'Подписка на курс'
